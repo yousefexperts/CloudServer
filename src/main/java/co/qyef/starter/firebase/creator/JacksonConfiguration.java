@@ -7,9 +7,6 @@ import org.zalando.problem.validation.ConstraintViolationProblemModule;
 
 @Configuration
 public class JacksonConfiguration {
-
-
-
     @Bean
     ProblemModule problemModule() {
         return new ProblemModule();
@@ -19,5 +16,4 @@ public class JacksonConfiguration {
     ConstraintViolationProblemModule constraintViolationProblemModule() {
         return new ConstraintViolationProblemModule();
     }
-
 }

@@ -40,51 +40,5 @@ public class Bank extends AbstractEntity implements Serializable {
     @Column(name = "bank_address_street" , nullable = false)
     private String bankAddressStreet;
 
-    public String getBankName() {
-        return bankName;
-    }
 
-    public void setBankName(String bankName) {
-        this.bankName = bankName;
-    }
-
-    public String getBankCode() {
-        return bankCode;
-    }
-
-    public void setBankCode(String bankCode) {
-        this.bankCode = bankCode;
-    }
-
-    public String getBankEmail() {
-        return bankEmail;
-    }
-
-    public void setBankEmail(String bankEmail) {
-        this.bankEmail = bankEmail;
-    }
-
-    public String getBankPhone() {
-        return bankPhone;
-    }
-
-    public void setBankPhone(String bankPhone) {
-        this.bankPhone = bankPhone;
-    }
-
-    public String getBankAddress() {
-        return bankAddress;
-    }
-
-    public void setBankAddress(String bankAddress) {
-        this.bankAddress = bankAddress;
-    }
-
-    public String getBankAddressStreet() {
-        return bankAddressStreet;
-    }
-
-    public void setBankAddressStreet(String bankAddressStreet) {
-        this.bankAddressStreet = bankAddressStreet;
-    }
 }

@@ -18,8 +18,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public abstract class Payment extends AbstractEntity {
 
-
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "transaction_id" , nullable = false)
     private Transaction transaction;

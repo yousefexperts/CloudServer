@@ -17,13 +17,10 @@ import java.io.IOException;
 public class FirebaseFilter extends OncePerRequestFilter {
 
     private static String HEADER_NAME = "X-Authorization-Firebase";
-
     private FirebaseService firebaseService;
-
     public FirebaseFilter(FirebaseService firebaseService) {
         this.firebaseService = firebaseService;
     }
-
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {

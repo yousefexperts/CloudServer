@@ -17,6 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.mongodb.MongoDbFactory;
+import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
@@ -53,7 +57,7 @@ public class MongoSpringConfig {
 
     @Bean
     public Morphia morphia() {
-        Morphia morphia = new Morphia().mapPackage("at.rovo.awsxray.db.entities.mongo");
+        Morphia morphia = new Morphia().mapPackage("com.experts.core.biller.statemachine.api.rovo.awsxray.domain.entities.mongo");
 
         morphia.getMapper().getConverters().addConverter(BigDecimalConverter.class);
 
@@ -65,6 +69,7 @@ public class MongoSpringConfig {
         MongoClient mongo = null;
         try {
             mongo = mongo();
+
         } catch (IOException e) {
             LOG.error("Could not create the local database (embedded MongoDB)", e);
         }
@@ -97,5 +102,15 @@ public class MongoSpringConfig {
     @Bean
     public FileService fileService() {
         return new FileService();
+    }
+
+    @Bean
+    public MongoDbFactory mongoDbFactory() throws UnknownHostException{
+        return new SimpleMongoDbFactory(new MongoClient("localhost", 27017), "admin");
+    }
+
+    @Bean
+    public MongoOperations mongoOperations() throws UnknownHostException{
+        return new MongoTemplate(mongoDbFactory());
     }
 }

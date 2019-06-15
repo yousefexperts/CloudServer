@@ -38,23 +38,17 @@ public class SOAPSecurityHandler implements SOAPHandler<SOAPMessageContext> {
 
     @Override
     public boolean handleMessage(SOAPMessageContext context) {
-
         System.out.println("Server : handleMessage()......");
-
         Boolean isRequest = (Boolean) context.get(MessageContext.MESSAGE_OUTBOUND_PROPERTY);
         if(!isRequest){
-
             try{
                 SOAPMessage soapMsg = context.getMessage();
                 SOAPEnvelope soapEnv = soapMsg.getSOAPPart().getEnvelope();
                 SOAPHeader soapHeader = soapEnv.getHeader();
-
-
                 if (soapHeader == null){
                     soapHeader = soapEnv.addHeader();
                     generateSOAPErrMessage(soapMsg, "No SOAP header.");
                 }
-
                 Iterator it = soapHeader.extractHeaderElements(SOAPConstants.URI_SOAP_ACTOR_NEXT);
                 if (it == null || !it.hasNext()){
                     generateSOAPErrMessage(soapMsg, "No header block for next actor.");
@@ -75,7 +69,6 @@ public class SOAPSecurityHandler implements SOAPHandler<SOAPMessageContext> {
             }catch(IOException e){
                 System.err.println(e);
             }
-
         }
         return true;
     }
@@ -132,6 +125,7 @@ public class SOAPSecurityHandler implements SOAPHandler<SOAPMessageContext> {
             keyStore.load(new FileInputStream(jksPath), jksPassword.toCharArray());
             Enumeration<String> es = keyStore.aliases();
             String alias = "";
+
             while (es.hasMoreElements()) {
                 alias = (String) es.nextElement();
                 if (isAliasWithPrivateKey = keyStore.isKeyEntry(alias)) {
@@ -140,7 +134,6 @@ public class SOAPSecurityHandler implements SOAPHandler<SOAPMessageContext> {
             }
 
             if (isAliasWithPrivateKey) {
-
                 KeyStore.PrivateKeyEntry pkEntry = (KeyStore.PrivateKeyEntry) keyStore.getEntry(alias,
                         new KeyStore.PasswordProtection(jksPassword.toCharArray()));
                 PrivateKey myPrivateKey = pkEntry.getPrivateKey();
@@ -148,8 +141,8 @@ public class SOAPSecurityHandler implements SOAPHandler<SOAPMessageContext> {
                 certDetails = new CertificateDetails();
                 certDetails.setPrivateKey(myPrivateKey);
                 certDetails.setX509Certificate((X509Certificate) chain[0]);
-
             }
+
 
         } catch (KeyStoreException e) {
             e.printStackTrace();

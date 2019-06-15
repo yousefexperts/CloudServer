@@ -4,6 +4,7 @@ import co.qyef.starter.firebase.domain.User;
 import co.qyef.starter.firebase.repository.UserRepository;
 import com.gismat.test.service.exception.FirebaseUserNotExistsException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.core.Authentication;

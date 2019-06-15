@@ -40,43 +40,5 @@ public class Tasks extends AbstractEntity {
     @Version
     private int version;
 
-    public String getTaskName() {
-        return taskName;
-    }
 
-    public void setTaskName(String taskName) {
-        this.taskName = taskName;
-    }
-
-    public String getTaskId() {
-        return taskId;
-    }
-
-    public void setTaskId(String taskId) {
-        this.taskId = taskId;
-    }
-
-    public TasksType getType() {
-        return type;
-    }
-
-    public void setType(TasksType type) {
-        this.type = type;
-    }
-
-    public List<TaskVariables> getVariables() {
-        return variables;
-    }
-
-    public void setVariables(List<TaskVariables> variables) {
-        this.variables = variables;
-    }
-
-    public int getVersion() {
-        return version;
-    }
-
-    public void setVersion(int version) {
-        this.version = version;
-    }
 }

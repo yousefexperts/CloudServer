@@ -16,14 +16,14 @@ import java.util.Arrays;
 @Validated
 public class MongoSettings {
 
-    @Value("dmin")
+    @Value("admin")
     private String user;
 
-    @Value("dmin")
+    @Value("admin")
     private String password;
 
     @NotNull
-    @Value("mongo_core_qyef")
+    @Value("admin")
     private String database;
 
 

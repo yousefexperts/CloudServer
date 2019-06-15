@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.io.Serializable;
 
 
-@SuppressWarnings("unused")
+
 @AllArgsConstructor
 @Getter
 public class CustomErrorResponse implements Serializable {

@@ -9,7 +9,4 @@ package com.experts.core.biller.statemachine.api.activemq.standers.config;
 
 @Configuration
 public class MySQLFlywayConfig {
-
-
-
 }

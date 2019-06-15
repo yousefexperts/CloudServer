@@ -11,10 +11,6 @@ import com.experts.core.biller.statemachine.api.rovo.awsxray.security.BasicAuthF
 
 public abstract class BaseAPIRouteBuilder extends RouteBuilder {
 
-    /**
-     * Configures basic exception handler and a common Camel Rest DSL configuration for inheriting
-     * Rest endpoints defined by sub classes.
-     */
     @Override
     public void configure() throws Exception {
 
@@ -42,28 +38,17 @@ public abstract class BaseAPIRouteBuilder extends RouteBuilder {
                     .contextPath("/api")
                 .endpointProperty("matchOnUriPrefix", "true")
                 .endpointProperty("sendServerVersion", "false")
-//                .componentProperty("filtersRef", "#tracingFilters")
                 .jsonDataFormat("hal+json")
-                // enable CORS header in the HTTP response
                 .enableCORS(true)
                 .corsHeaderProperty("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
                 .corsHeaderProperty("Access-Control-Allow-Headers",
                                     "Origin, Accept, Content-Type, Accept-Encoding, Accept-Language, "
                                     + "X-Requested-With, Transfer-Encoding, Authorization, X-APP-KEY, "
                                     + "Access-Control-Request-Method, Access-Control-Request-Headers")
-                // we do want to make use of the streaming API which sends out the response in small chunks
-                // instead of all at once. This, however, will replace the Content-Length header field with
-                // a Transfer-Encoding: chunked header field. A chunk length of 0 indicates the end of the
-                // stream
                 .endpointProperty("chunked", "true");
 
         this.defineRoute();
     }
 
-    /**
-     * Defines an custom API route services have to specify.
-     *
-     * @throws Exception All thrown exceptions while executing the route
-     */
     protected abstract void defineRoute() throws Exception;
 }

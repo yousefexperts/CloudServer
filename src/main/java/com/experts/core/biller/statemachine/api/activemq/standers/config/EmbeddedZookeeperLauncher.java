@@ -14,7 +14,6 @@ public class EmbeddedZookeeperLauncher implements ApplicationListener<Applicatio
             Field field = event.getSpringApplication().getClass().getDeclaredField("additionalProfiles");
             field.setAccessible(true);
 
-            @SuppressWarnings("unchecked")
             Set<String> profiles = (Set<String>)field.get(event.getSpringApplication());
             if(profiles.remove("zookeeper")){
                 EmbeddedZookeeperUtil.start();

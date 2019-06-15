@@ -1,29 +1,24 @@
 package com.experts.core.biller.statemachine.api.activemq.standers.config;
 
 import co.qyef.starter.firebase.config.DatabaseConfigurationStarter;
-import co.qyef.starter.firebase.creator.AsyncConfiguration;
 import com.atomikos.jdbc.AtomikosDataSourceBean;
 import com.atomikos.jms.AtomikosConnectionFactoryBean;
 import com.mysql.cj.jdbc.MysqlXADataSource;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import io.github.jhipster.config.JHipsterConstants;
-import io.github.jhipster.config.liquibase.AsyncSpringLiquibase;
-import liquibase.integration.spring.SpringLiquibase;
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.artemis.jms.client.ActiveMQXAConnectionFactory;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.TransportConnector;
-import org.apache.commons.dbcp.BasicDataSource;
-import org.postgresql.xa.PGXADataSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.liquibase.LiquibaseProperties;
-import org.springframework.context.annotation.*;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.orm.jpa.JpaTransactionManager;
@@ -36,23 +31,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import javax.jms.ConnectionFactory;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-import java.nio.charset.Charset;
 import java.sql.SQLException;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
 @EnableJpaRepositories(basePackages = {"com.experts.core.biller.statemachine.api.gigaspace.daos.repo"})
 @EnableJpaAuditing
+@EntityScan(basePackages = {"com.experts.core.biller.statemachine.api.web.syslog.security.model","com.experts.core.biller.statemachine.api.model.domain.jpa"})
 @EnableTransactionManagement
-
 public class CustomerConfig {
     private final Logger log = LoggerFactory.getLogger(DatabaseConfigurationStarter.class);
+
     @Autowired
     private JpaVendorAdapter jpaVendorAdapter;
-
 
     @Autowired
     private  Environment env;
@@ -118,7 +110,25 @@ public class CustomerConfig {
         hibernateJpaVendorAdapter.setShowSql(true);
         hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
         final LocalContainerEntityManagerFactoryBean build = new LocalContainerEntityManagerFactoryBean();
-        build.setPackagesToScan("com.experts.core.biller.statemachine.api.model.domain.jpa");
+        build.setPackagesToScan("com.experts.core.biller.statemachine.api.model.domain.jpa,com.experts.core.biller.statemachine.api.web.syslog.security.model");
+        build.setPersistenceUnitName("EXPERTS-MYSQL");
+        build.setPersistenceXmlLocation("classpath:META-INF/persistence-dev.xml");
+        HashMap<String, Object> properties = new HashMap<String, Object>();
+        properties.put("hibernate.transaction.jta.platform", AtomikFactoryBean.class.getName());
+        properties.put("javax.persistence.transactionType", "JTA");
+        build.setJtaDataSource(dataSourceOps());
+        build.setJpaVendorAdapter(hibernateJpaVendorAdapter());
+        return build;
+    }
+
+    @Bean("managerCoreFactory")
+    @Order(-1000)
+    public LocalContainerEntityManagerFactoryBean managerCoreFactory() throws SQLException {
+        HibernateJpaVendorAdapter hibernateJpaVendorAdapter = new HibernateJpaVendorAdapter();
+        hibernateJpaVendorAdapter.setShowSql(true);
+        hibernateJpaVendorAdapter.setDatabase(Database.MYSQL);
+        final LocalContainerEntityManagerFactoryBean build = new LocalContainerEntityManagerFactoryBean();
+        build.setPackagesToScan("com.experts.core.biller.statemachine.api.model.domain.jpa,com.experts.core.biller.statemachine.api.web.syslog.security.model");
         build.setPersistenceUnitName("EXPERTS-MYSQL");
         build.setPersistenceXmlLocation("classpath:META-INF/persistence-dev.xml");
         HashMap<String, Object> properties = new HashMap<String, Object>();
@@ -147,18 +157,11 @@ public class CustomerConfig {
         hikariConfig.setMaximumPoolSize(5);
         hikariConfig.setConnectionTestQuery("SELECT 1");
         hikariConfig.setPoolName("springHikariCP");
-
         hikariConfig.addDataSourceProperty("dataSource.cachePrepStmts", "true");
         hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSize", "250");
         hikariConfig.addDataSourceProperty("dataSource.prepStmtCacheSqlLimit", "2048");
         hikariConfig.addDataSourceProperty("dataSource.useServerPrepStmts", "true");
-
         HikariDataSource dataSource = new HikariDataSource(hikariConfig);
-
         return dataSource;
     }
-
-
-
-
 }

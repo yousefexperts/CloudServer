@@ -8,7 +8,6 @@ import java.io.Serializable;
 
 @SpaceClass
 public class AccountData implements Serializable {
-	
 
 	private String userName;
 

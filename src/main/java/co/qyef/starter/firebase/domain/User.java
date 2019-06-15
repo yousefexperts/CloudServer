@@ -71,7 +71,7 @@ public class User extends AbstractAuditingEntity implements Serializable {
     private Set<Authority> authorities = new HashSet<>();
 
     @JsonIgnore
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "user")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private Set<PersistentToken> persistentTokens = new HashSet<>();
 
 

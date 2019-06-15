@@ -68,34 +68,24 @@ public class LoggingConfiguration {
         logstashAppender.setName("LOGSTASH");
         logstashAppender.setContext(context);
         String customFields = "{\"app_name\":\"" + appName + "\",\"app_port\":\"" + serverPort + "\"}";
-
-        // More documentation is available at: https://github.com/logstash/logstash-logback-encoder
         LogstashEncoder logstashEncoder=new LogstashEncoder();
-        // Set the Logstash appender config from JHipster properties
         logstashEncoder.setCustomFields(customFields);
-        // Set the Logstash appender config from JHipster properties
         logstashAppender.addDestinations(new InetSocketAddress(jHipsterProperties.getLogging().getLogstash().getHost(),jHipsterProperties.getLogging().getLogstash().getPort()));
-
         ShortenedThrowableConverter throwableConverter = new ShortenedThrowableConverter();
         throwableConverter.setRootCauseFirst(true);
         logstashEncoder.setThrowableConverter(throwableConverter);
         logstashEncoder.setCustomFields(customFields);
-
         logstashAppender.setEncoder(logstashEncoder);
         logstashAppender.start();
-
-        // Wrap the appender in an Async appender for performance
         AsyncAppender asyncLogstashAppender = new AsyncAppender();
         asyncLogstashAppender.setContext(context);
         asyncLogstashAppender.setName("ASYNC_LOGSTASH");
         asyncLogstashAppender.setQueueSize(jHipsterProperties.getLogging().getLogstash().getQueueSize());
         asyncLogstashAppender.addAppender(logstashAppender);
         asyncLogstashAppender.start();
-
         context.getLogger("ROOT").addAppender(asyncLogstashAppender);
     }
 
-    // Configure a log filter to remove "metrics" logs from all appenders except the "LOGSTASH" appender
     private void setMetricsMarkerLogbackFilter(LoggerContext context) {
         log.info("Filtering metrics logs from all appenders except the {} appender", LOGSTASH_APPENDER_NAME);
         OnMarkerEvaluator onMarkerMetricsEvaluator = new OnMarkerEvaluator();
@@ -121,11 +111,6 @@ public class LoggingConfiguration {
         }
     }
 
-    /**
-     * Logback configuration is achieved by configuration file and API.
-     * When configuration file change is detected, the configuration is reset.
-     * This listener ensures that the programmatic configuration is also re-applied after reset.
-     */
     class LogbackLoggerContextListener extends ContextAwareBase implements LoggerContextListener {
 
         @Override
@@ -145,12 +130,10 @@ public class LoggingConfiguration {
 
         @Override
         public void onStop(LoggerContext context) {
-            // Nothing to do.
         }
 
         @Override
         public void onLevelChange(ch.qos.logback.classic.Logger logger, Level level) {
-            // Nothing to do.
         }
     }
 

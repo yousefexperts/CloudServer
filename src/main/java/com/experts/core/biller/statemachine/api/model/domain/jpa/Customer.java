@@ -18,15 +18,9 @@ import javax.persistence.*;
 @Builder
 @SpaceClass
 public class Customer extends AbstractEntity{
-
-
-
 	@Column(name = "name", nullable = false)
 	private String name;
 
 	@Column(name = "age", nullable = false)
 	private Integer age;
-
-
-
 }

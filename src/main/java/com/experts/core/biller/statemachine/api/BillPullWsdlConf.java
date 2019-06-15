@@ -12,9 +12,6 @@ import java.io.IOException;
 
 
 public class BillPullWsdlConf {
-
-
-
     public DefaultWsdl11Definition defaultWsdlBillPullDefinition(XsdSchema pulls) {
         DefaultWsdl11Definition wsdl11Definition = new DefaultWsdl11Definition();
         wsdl11Definition.setPortTypeName("BillPullRequest");
@@ -23,8 +20,4 @@ public class BillPullWsdlConf {
         wsdl11Definition.setSchema(pulls);
         return wsdl11Definition;
     }
-
-
-
-
 }

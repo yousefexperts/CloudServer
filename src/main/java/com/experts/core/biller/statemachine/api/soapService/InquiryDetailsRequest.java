@@ -16,17 +16,10 @@ import java.io.Serializable;
 
 @XmlRootElement(namespace = "http://www.experts.ps/ws/inquiry", name = "UserRequest")
 @XmlAccessorType(XmlAccessType.FIELD)
+@Data
 public class InquiryDetailsRequest {
 
     @XmlElement
     private String userId;
-
-    public String getUserId() {
-        return userId;
-    }
-
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
 
 }

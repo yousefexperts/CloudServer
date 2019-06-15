@@ -26,11 +26,4 @@ public class AccountType extends AbstractEntity implements Serializable {
     @Column(name  = "account_type" , nullable = false)
     private String accountType;
 
-    public String getAccountType() {
-        return accountType;
-    }
-
-    public void setAccountType(String accountType) {
-        this.accountType = accountType;
-    }
 }

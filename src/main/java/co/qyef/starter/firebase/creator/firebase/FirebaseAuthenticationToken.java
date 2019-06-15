@@ -12,7 +12,6 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
 	private final Object token;
 	private Object credentials;
 
-
 	public FirebaseAuthenticationToken(Object principal, Object credentials) {
 		super(null);
 		this.token = principal;
@@ -20,12 +19,11 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
 		setAuthenticated(false);
 	}
 
-
 	public FirebaseAuthenticationToken(Object principal, Object credentials, Collection<? extends GrantedAuthority> authorities) {
 		super(authorities);
 		this.token = principal;
 		this.credentials = credentials;
-		super.setAuthenticated(true); // must use super, as we override
+		super.setAuthenticated(true);
 	}
 
 	public Object getCredentials() {
@@ -44,8 +42,6 @@ public class FirebaseAuthenticationToken extends AbstractAuthenticationToken {
 
 		super.setAuthenticated(false);
 	}
-
-
 
     @Override
     public String toString() {

@@ -83,29 +83,6 @@ public class WebConfigurer implements ServletContextInitializer {
         cachingHttpHeadersFilter.setAsyncSupported(true);
     }
 
-   /* private void initMetrics(ServletContext servletContext, EnumSet<DispatcherType> disps) {
-        log.debug("Initializing Metrics registries");
-        servletContext.setAttribute(InstrumentedFilter.REGISTRY_ATTRIBUTE,
-            metricRegistry);
-        servletContext.setAttribute(MetricsServlet.METRICS_REGISTRY,
-            metricRegistry);
-
-        log.debug("Registering Metrics Filter");
-        FilterRegistration.Dynamic metricsFilter = servletContext.addFilter("webappMetricsFilter",
-            new InstrumentedFilter());
-
-        metricsFilter.addMappingForUrlPatterns(disps, true, "/admin/*");
-        metricsFilter.setAsyncSupported(true);
-
-        log.debug("Registering Metrics Servlet");
-        ServletRegistration.Dynamic metricsAdminServlet =
-            servletContext.addServlet("metricsServlet", new MetricsServlet());
-
-        metricsAdminServlet.addMapping("/management/metrics/*");
-        metricsAdminServlet.setAsyncSupported(true);
-        metricsAdminServlet.setLoadOnStartup(2);
-    }*/
-
     @Bean
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
@@ -126,8 +103,4 @@ public class WebConfigurer implements ServletContextInitializer {
         h2ConsoleServlet.setLoadOnStartup(1);
     }
 
-    /*@Autowired(required = false)
-    public void setMetricRegistry(MetricRegistry metricRegistry) {
-        this.metricRegistry = metricRegistry;
-    }*/
 }

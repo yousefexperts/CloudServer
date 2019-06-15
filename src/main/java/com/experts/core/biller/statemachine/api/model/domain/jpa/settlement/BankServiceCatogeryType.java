@@ -27,11 +27,4 @@ public class BankServiceCatogeryType extends AbstractEntity implements Serializa
     @Column(name  = "type" , nullable = false)
     private String type;
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
 }

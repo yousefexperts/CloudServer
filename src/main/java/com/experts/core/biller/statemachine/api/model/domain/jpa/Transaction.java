@@ -35,35 +35,5 @@ public class Transaction extends AbstractEntity {
     @JoinColumn(name  = "status_id" , nullable = false)
     private TransactionStatus status;
 
-    public int getVersion() {
-        return version;
-    }
 
-    public void setVersion(int version) {
-        this.version = version;
-    }
-
-    public PayState getStates() {
-        return states;
-    }
-
-    public void setStates(PayState states) {
-        this.states = states;
-    }
-
-    public ProcessState getProcesses() {
-        return processes;
-    }
-
-    public void setProcesses(ProcessState processes) {
-        this.processes = processes;
-    }
-
-    public TransactionStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(TransactionStatus status) {
-        this.status = status;
-    }
 }

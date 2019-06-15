@@ -53,12 +53,11 @@ public class MvcViewConfiguration extends WebMvcConfigurerAdapter {
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("static/resources/**").addResourceLocations("classpath:/META-INF/static/resources/");
-        registry.addResourceHandler("swagger-ui.html")
-                .addResourceLocations("classpath:/META-INF/resources/");
 
-        registry.addResourceHandler("/webjars/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/");
+        registry.addResourceHandler("static/resources/**").addResourceLocations("classpath:/META-INF/static/resources/");
+        registry.addResourceHandler("swagger-ui.html").addResourceLocations("classpath:/META-INF/resources/");
+        registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+
     }
 
     @Override

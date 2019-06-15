@@ -5,6 +5,7 @@ import com.experts.core.biller.statemachine.api.rovo.awsxray.domain.entities.jpa
 import com.experts.core.biller.statemachine.api.rovo.awsxray.domain.entities.jpa.LogUserEntity;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 public class AuditLogUtils {
 
@@ -13,10 +14,10 @@ public class AuditLogUtils {
 
     public void auditLog(String userId, String logMessage) {
 
-        LogUserEntity logUser = auditLogService.findUserByUserId(userId);
+        List<LogUserEntity> logUser = auditLogService.findUserByUserId(userId);
 
         AuditLogEntity auditLog = new AuditLogEntity();
-        auditLog.setUser(logUser);
+        auditLog.setUser(logUser.get(0));
         auditLog.setLog(logMessage);
         auditLogService.persist(auditLog);
     }

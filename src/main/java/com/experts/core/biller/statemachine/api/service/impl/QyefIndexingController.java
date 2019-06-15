@@ -1,7 +1,7 @@
 package com.experts.core.biller.statemachine.api.service.impl;
 
 
-import com.experts.core.biller.statemachine.api.auth.WebSecurityConfig;
+import com.experts.core.biller.statemachine.api.auth.WebSecurityConfigApp;
 import com.experts.core.biller.statemachine.api.gigaspace.daos.repo.UserCoreRepo;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.UsersCore;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.hr.Person;
@@ -19,10 +19,8 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 
-import javax.annotation.Resource;
 import javax.transaction.Transactional;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
@@ -30,7 +28,7 @@ import javax.ws.rs.Produces;
 @CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @Component
-@Import(WebSecurityConfig.class)
+@Import(WebSecurityConfigApp.class)
 public class QyefIndexingController {
 
     private String amount;
@@ -109,4 +107,5 @@ public class QyefIndexingController {
         }catch(Exception io){io.printStackTrace();}
         return ResponseEntity.status(HttpStatus.OK).body(QyefSuccessResponse.create());
     }
+
 }

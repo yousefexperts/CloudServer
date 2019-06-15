@@ -40,4 +40,5 @@ public class AuthFilterStrategy implements HeaderFilterStrategy
   protected boolean isAllowed(String headerName) {
     return Iterables.tryFind(allowedHeaders, Predicates.containsPattern(Strings.nullToEmpty(headerName).toLowerCase())).isPresent();
   }
+
 }

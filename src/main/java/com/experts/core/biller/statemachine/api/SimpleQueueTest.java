@@ -1,19 +1,3 @@
-/*
- * Copyright (c) 2008-2018, Hazelcast, Inc. All Rights Reserved.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.experts.core.biller.statemachine.api;
 
 import com.hazelcast.core.Hazelcast;
@@ -24,10 +8,6 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicLong;
-
-/**
- * A simple queue test
- */
 public final class SimpleQueueTest {
 
     private static final int VALUE_SIZE = 1000;
@@ -36,9 +16,6 @@ public final class SimpleQueueTest {
     private SimpleQueueTest() {
     }
 
-    /**
-     * Creates a cluster and exercises a queue until stopped
-     */
     public static void main(String[] args) {
         int threadCount = 5;
         final HazelcastInstance hz1 = Hazelcast.newHazelcastInstance(null);
@@ -83,9 +60,7 @@ public final class SimpleQueueTest {
         });
     }
 
-    /**
-     * A basic statistics class
-     */
+
     private static class Stats {
 
         private AtomicLong offers = new AtomicLong();

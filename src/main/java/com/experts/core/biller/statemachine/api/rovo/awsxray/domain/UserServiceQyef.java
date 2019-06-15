@@ -14,7 +14,6 @@ import java.util.ArrayList;
 @Service
 public class UserServiceQyef extends BaseMongoService<UserEntity> {
 
-    /** Number of characters in the default user key **/
     public static int USER_KEY_LENGTH = 42;
 
     public UserServiceQyef() {

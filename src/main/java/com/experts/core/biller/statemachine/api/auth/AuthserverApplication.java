@@ -22,13 +22,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 @EnableAutoConfiguration
 @Controller
 @SessionAttributes("authorizationRequest")
-@Import({CustomerConfig.class , WebSecurityConfig.class})
+@Import({CustomerConfig.class , WebSecurityConfigApp.class})
 public class AuthserverApplication extends WebMvcConfigurerAdapter {
-
-	
-
-
-
 
 	@Configuration
 	@EnableAuthorizationServer
@@ -45,7 +40,6 @@ public class AuthserverApplication extends WebMvcConfigurerAdapter {
 		static final String TRUST = "trust";
 		static final int ACCESS_TOKEN_VALIDITY_SECONDS = 1*60*60;
 		static final int FREFRESH_TOKEN_VALIDITY_SECONDS = 6*60*60;
-
 
 		@Bean
 		public JwtAccessTokenConverter accessTokenConverter() {

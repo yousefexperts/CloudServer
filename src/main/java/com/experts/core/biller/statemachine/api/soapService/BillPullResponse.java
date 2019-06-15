@@ -20,8 +20,4 @@ public class BillPullResponse {
 		BillPullResult = billPullResult;
 	}
 
-	
-    
-    
-    
 }

@@ -26,40 +26,34 @@ public class FirebaseBasicAuthenticationFilter extends BasicAuthenticationFilter
     @Autowired
     public FirebaseBasicAuthenticationFilter(AuthenticationManager authenticationManager, TokenProvider tokenProvider) {
         super(authenticationManager);
-        this.tokenProvider=tokenProvider;
+        this.tokenProvider = tokenProvider;
     }
 
     public FirebaseBasicAuthenticationFilter(AuthenticationManager authenticationManager, AuthenticationEntryPoint authenticationEntryPoint, TokenProvider tokenProvider) {
         super(authenticationManager, authenticationEntryPoint);
-        this.tokenProvider=tokenProvider;
+        this.tokenProvider = tokenProvider;
 
     }
-
-
 
     @Override
     protected void onSuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, Authentication authResult) throws IOException {
-       try{
-        String jwt = tokenProvider.createToken(SecurityContextHolder.getContext().getAuthentication(), true);
-        response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
-    } catch (AuthenticationException ae) {
-        log.trace("Authentication exception trace: {}", ae);
-    }
+        try {
+            String jwt = tokenProvider.createToken(SecurityContextHolder.getContext().getAuthentication(), true);
+            response.addHeader(JWTConfigurer.AUTHORIZATION_HEADER, "Bearer " + jwt);
+        } catch (AuthenticationException ae) {
+            log.trace("Authentication exception trace: {}", ae);
+        }
     }
 
     static class JWTToken {
-
         private String idToken;
-
         JWTToken(String idToken) {
             this.idToken = idToken;
         }
-
         @JsonProperty("id_token")
         String getIdToken() {
             return idToken;
         }
-
         void setIdToken(String idToken) {
             this.idToken = idToken;
         }

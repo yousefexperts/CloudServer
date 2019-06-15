@@ -20,15 +20,16 @@ public class AuditLogService {
 
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
 
-    @PersistenceContext(unitName = "pun")
+    @PersistenceContext(unitName = "EXPERTS-MYSQL")
     protected EntityManager entityManager;
 
-    public LogUserEntity findUserByUserId(String userId) {
-        TypedQuery<LogUserEntity> q = entityManager.createNamedQuery("findUserViaUserId", LogUserEntity.class);
+    public List<LogUserEntity> findUserByUserId(String userId) {
+        Query q = entityManager.createNamedQuery("findUserViaUserId");
+
         q.setParameter("userId", userId);
         q.setMaxResults(1);
         try {
-            return q.getSingleResult();
+            return q.getResultList();
         } catch (Exception e) {
             LOG.error("Not matching user was found.");
             return null;
@@ -36,9 +37,11 @@ public class AuditLogService {
     }
 
     public List<AuditLogEntity> findUserLogs(String userId) {
-        LogUserEntity user = findUserByUserId(userId);
+        List<LogUserEntity> user = findUserByUserId(userId);
         if (null != user) {
-            TypedQuery<AuditLogEntity> q = entityManager.createNamedQuery("findLogsViaUser", AuditLogEntity.class);
+
+            Query q = entityManager.createNamedQuery("findLogsViaUser");
+
             q.setParameter("user", user);
             return q.getResultList();
         }

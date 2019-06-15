@@ -14,12 +14,12 @@ import com.codahale.metrics.MetricRegistry;
 import com.experts.core.biller.statemachine.api.activemq.standers.config.*;
 import com.experts.core.biller.statemachine.api.annotation.StatesOnStates;
 import com.experts.core.biller.statemachine.api.annotation.StatesOnTransition;
-import com.experts.core.biller.statemachine.api.auth.WebSecurityConfig;
+import com.experts.core.biller.statemachine.api.auth.WebSecurityConfigApp;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.Roles;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.TaskVariables;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.Tasks;
 import com.experts.core.biller.statemachine.api.model.domain.jpa.UsersCore;
-import com.experts.core.biller.statemachine.api.rovo.awsxray.config.SpringConfig;
+import com.experts.core.biller.statemachine.api.model.domain.jpa.hr.Person;
 import com.experts.core.biller.statemachine.api.security.encrypt.*;
 import com.experts.core.biller.statemachine.api.service.impl.HeaderModifierAdvice;
 import com.experts.core.biller.statemachine.api.service.impl.IInquiryServiceController;
@@ -37,8 +37,9 @@ import com.ryantenney.metrics.spring.config.annotation.EnableMetrics;
 import io.micrometer.spring.web.client.DefaultRestTemplateExchangeTagsProvider;
 import io.micrometer.spring.web.client.MetricsRestTemplateCustomizer;
 import io.micrometer.spring.web.client.RestTemplateExchangeTagsProvider;*/
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.camel.Service;
+import lombok.val;
 import org.apache.camel.spring.javaconfig.Main;
 import org.apache.http.client.HttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -52,16 +53,32 @@ import org.apache.ignite.configuration.IgniteConfiguration;
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
 import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
 import org.apache.ignite.spi.failover.always.AlwaysFailoverSpi;*/
+import org.apache.ignite.Ignite;
+import org.apache.ignite.IgniteException;
+import org.apache.ignite.Ignition;
+import org.apache.ignite.cache.CacheMode;
+import org.apache.ignite.configuration.CacheConfiguration;
+import org.apache.ignite.configuration.ConnectorConfiguration;
+import org.apache.ignite.configuration.IgniteConfiguration;
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi;
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder;
+import org.apache.ignite.spi.failover.always.AlwaysFailoverSpi;
+import org.apereo.cas.CasEmbeddedContainerUtils;
+import org.apereo.cas.configuration.CasConfigurationProperties;
+import org.apereo.cas.web.CasWebApplicationContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.WebApplicationType;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.mongo.MongoDataAutoConfiguration;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.boot.autoconfigure.hazelcast.HazelcastAutoConfiguration;
 import org.springframework.boot.autoconfigure.liquibase.LiquibaseAutoConfiguration;
+import org.springframework.boot.autoconfigure.mongo.MongoAutoConfiguration;
 import org.springframework.boot.autoconfigure.web.reactive.WebFluxAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -71,10 +88,10 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.concurrent.ConcurrentMapCacheManager;
 import org.springframework.cache.interceptor.KeyGenerator;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
+import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.netflix.eureka.EurekaClientAutoConfiguration;
 import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 import org.springframework.cloud.zookeeper.ZookeeperAutoConfiguration;
-import org.springframework.cloud.zookeeper.ZookeeperProperties;
 import org.springframework.cloud.zookeeper.discovery.dependency.DependencyRestTemplateAutoConfiguration;
 import org.springframework.cloud.zookeeper.serviceregistry.ZookeeperAutoServiceRegistrationAutoConfiguration;
 import org.springframework.context.ApplicationContext;
@@ -89,6 +106,7 @@ import org.springframework.jms.annotation.EnableJms;
 import org.springframework.kafka.annotation.EnableKafka;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
 import org.springframework.scheduling.TaskScheduler;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ConcurrentTaskScheduler;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -96,7 +114,6 @@ import org.springframework.session.config.annotation.web.http.EnableSpringHttpSe
 import org.springframework.session.hazelcast.HazelcastSessionRepository;
 import org.springframework.session.hazelcast.PrincipalNameExtractor;
 import org.springframework.session.hazelcast.config.annotation.web.http.EnableHazelcastHttpSession;
-import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 import org.springframework.statemachine.config.common.annotation.EnableAnnotationConfiguration;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.WebApplicationInitializer;
@@ -109,10 +126,11 @@ import org.springframework.ws.transport.http.MessageDispatcherServlet;
 import javax.annotation.PostConstruct;
 import javax.naming.NamingException;
 import java.lang.invoke.MethodHandles;
+import java.util.Arrays;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
-@SpringBootApplication(exclude = {WebFluxAutoConfiguration.class, LiquibaseAutoConfiguration.class, EurekaClientAutoConfiguration.class, DependencyRestTemplateAutoConfiguration.class, ZookeeperAutoConfiguration.class, ZookeeperAutoServiceRegistrationAutoConfiguration.class})
+@SpringBootApplication(exclude = {MongoAutoConfiguration.class, MongoDataAutoConfiguration.class , WebFluxAutoConfiguration.class, LiquibaseAutoConfiguration.class, EurekaClientAutoConfiguration.class, DependencyRestTemplateAutoConfiguration.class, ZookeeperAutoConfiguration.class, ZookeeperAutoServiceRegistrationAutoConfiguration.class})
 @Configuration
 @ComponentScan(basePackages = {"com.gismat.test.*", "co.qyef.starter.firebase.*"})
 @ComponentScan(basePackages = {"com.experts.core.biller.statemachine.api",
@@ -125,7 +143,7 @@ import java.util.concurrent.TimeUnit;
     AtomikFactoryBean.class, AtomikFactoryBean.class, CustomerConfig.class,
     CompletedTransitionBean.class,
     FSMStartingBean.class,
-    WebSecurityConfig.class,
+    WebSecurityConfigApp.class,
     SamlConfigDefaults.class,
     InitialTransitionBean.class,
     TransitionProcessBean.class,
@@ -140,7 +158,7 @@ import java.util.concurrent.TimeUnit;
     UserQyef.class,
     StaticResourcesProductionFilter.class,
     SpringConfigMvc.class,
-    TransitionExecutionBean.class, WebSecurityConfigSaml.class, CustomerConfig.class, XAPublisherTemplate.class, JdbcInMemory.class, GenerateKeysService.class, AsymmetricCryptoService.class, EncryptByPkService.class, WebApplicationInitializer.class, SOAPSecurityHandler.class, SpringConfigMvc.class, HeaderModifierAdvice.class, WebSecurityConfig.class, IInquiryServiceController.class, PaymentNotificationController.class, PaymentServiceController.class,
+    TransitionExecutionBean.class, WebSecurityConfigSaml.class, CustomerConfig.class, XAPublisherTemplate.class, JdbcInMemory.class, GenerateKeysService.class, AsymmetricCryptoService.class, EncryptByPkService.class, WebApplicationInitializer.class, SOAPSecurityHandler.class, SpringConfigMvc.class, HeaderModifierAdvice.class, WebSecurityConfigApp.class, IInquiryServiceController.class, PaymentNotificationController.class, PaymentServiceController.class,
     TransitionPayBean.class})
 @EnableTransactionManagement
 @EntityScan(basePackageClasses = {Roles.class, Tasks.class, TaskVariables.class, UsersCore.class, IInquiryServiceController.class})
@@ -159,17 +177,30 @@ import java.util.concurrent.TimeUnit;
 @EnableIntegration
 @EnableSpringHttpSession
 @EnableIntegrationManagement
-@EnableJdbcHttpSession
-@EnableConfigurationProperties
 @EnableAnnotationConfiguration
 @EnableSpringConfigured
 @EnableMetrics
-@Import(ZookeeperProperties.class)
-public class VersioningApplication implements Service {
+@EnableConfigurationProperties(CasConfigurationProperties.class)
+@EnableAsync
+@NoArgsConstructor
+@EnableCircuitBreaker
+public class VersioningApplication {
     private static final Logger LOG = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private Main app;
 
     public static void main(String[] args) throws Exception {
+
+        val properties = CasEmbeddedContainerUtils.getRuntimeProperties(Boolean.TRUE);
+        val banner = CasEmbeddedContainerUtils.getCasBannerInstance();
+        SpringApplicationBuilder builder = new SpringApplicationBuilder(VersioningApplication.class)
+            .banner(banner)
+            .web(WebApplicationType.SERVLET)
+            .properties(properties)
+            .logStartupInfo(true)
+            .contextClass(CasWebApplicationContext.class);
+        builder.application().setAllowBeanDefinitionOverriding(true);
+        builder.run(args);
+
         new SpringApplicationBuilder(VersioningApplication.class).run(args);
         try {
             java.security.Security.setProperty("networkaddress.cache.ttl", "180");
@@ -180,8 +211,7 @@ public class VersioningApplication implements Service {
                 "Could not set the TTL of the Java VM Networkaddress cache. Will stick to the default value");
 
         }
-        VersioningApplication app = new VersioningApplication();
-        app.start();
+
     }
 
     @Bean(name = "manager")
@@ -261,7 +291,7 @@ public class VersioningApplication implements Service {
         return new ServletRegistrationBean(servlet, "/ws/*");
     }
 
-    /*@Bean
+    @Bean
     public IgniteConfiguration igniteConfiguration() {
         IgniteConfiguration igniteConfiguration = new IgniteConfiguration();
         igniteConfiguration.setClientMode(false);
@@ -286,16 +316,15 @@ public class VersioningApplication implements Service {
         alerts.setIndexedTypes(String.class, Person.class);
         igniteConfiguration.setCacheConfiguration(alerts);
         return igniteConfiguration;
-    }*/
+    }
 
-
-    /* @Bean
+     @Bean
     public Ignite ignite(IgniteConfiguration igniteConfiguration) throws IgniteException {
         final Ignite start = Ignition.start(igniteConfiguration);
         start.active(true);
         return start;
     }
-*/
+
     @Bean
     public IDummyBean dummyBean() {
         return new DummyBean();
@@ -334,22 +363,6 @@ public class VersioningApplication implements Service {
         return new MetricRegistry();
     }
 
-
-    @Override
-    public void start() throws Exception {
-        app = new Main();
-        AnnotationConfigApplicationContext ctx = new AnnotationConfigApplicationContext(SpringConfig.class);
-        app.setApplicationContext(ctx);
-        app.run();
-    }
-
-    @Override
-    public void stop() throws Exception {
-        if (app != null) {
-            app.stop();
-        }
-    }
-
     @PostConstruct
     public void initMetrics() {
         JmxReporter reporter = JmxReporter.forRegistry(getMetricsRegistry())
@@ -358,5 +371,7 @@ public class VersioningApplication implements Service {
             .build();
         reporter.start();
     }
+
+
 
 }

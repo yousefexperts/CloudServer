@@ -31,19 +31,5 @@ public class PayState extends AbstractEntity {
     @OneToMany( fetch = FetchType.LAZY , mappedBy =  "states" , cascade =  CascadeType.ALL)
     private List<Transaction> transactions;
 
-    public Payment getPayments() {
-        return payments;
-    }
-
-    public void setPayments(Payment payments) {
-        this.payments = payments;
-    }
-
-    public List<Transaction> getTransactions() {
-        return transactions;
-    }
-
-    public void setTransactions(List<Transaction> transactions) {
-        this.transactions = transactions;
-    }
+    
 }

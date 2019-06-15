@@ -50,8 +50,6 @@ import org.springframework.xml.xsd.XsdSchemaCollection;
 import java.nio.charset.Charset;
 import java.util.*;
 
-
-
 @Configuration
 @EnableWebMvc
 @ComponentScan(basePackageClasses = { PaymentNotificationController.class  , PaymentServiceController.class , PaymentPrePaidController.class })
@@ -160,9 +158,6 @@ public class SpringConfigMvc extends WebMvcConfigurerAdapter {
         negotiating.setOrder(2);
         return negotiating;
     }
-
-
-
 
     @Bean(name = "BillPullRequest")
     @Order(-1)

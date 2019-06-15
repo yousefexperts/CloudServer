@@ -47,16 +47,10 @@ public class FileProcessingRoute extends RouteBuilder {
                             if (matcher.find()) {
                                 LOG.info("{} available", matcher.group(1));
                             }
-
-                            // group1 link data
-                            // group2 link name
-                            // group3 date
-                            // group4 article short info
                             String response2 = response.replaceAll("<script.*?</script>", "");
                             response2 = response2.replaceAll("\\s+", " ");
                             Pattern results = Pattern.compile("<div class=\"g\">.*?<h3 class=\"r\"><a href=\"/url\\?q=(.*?)\">(.*?)</a>.*?</h3>.*?<div class=\"s\">.*?<cite>(.*?)</cite>.*?<span class=\"st\">(.*?)</span>");
                             Matcher resultMatcher = results.matcher(response2);
-
                             while (resultMatcher.find()) {
                                 String url = resultMatcher.group(1);
                                 String urlDesc = resultMatcher.group(2).replaceAll("<.*?>", "");
@@ -65,13 +59,11 @@ public class FileProcessingRoute extends RouteBuilder {
 
                                 result.addSearchResult(url, urlDesc, cite, subhead);
                             }
-
                             exchange.getIn().setBody(result);
                         })
                     .otherwise()
                         .log("Retrieving search results failed due to: ${exception.message}")
                 .end()
-
                 .log("Processing file ${header.CamelFileName} done");
     }
 }

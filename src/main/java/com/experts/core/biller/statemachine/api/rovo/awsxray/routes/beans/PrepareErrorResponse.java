@@ -28,12 +28,10 @@ public class PrepareErrorResponse {
         LOG.debug("Handling exception {}", cause.getClass().getSimpleName());
         if (cause instanceof APIException) {
             APIException apiEx = (APIException)cause;
-
             Message msg = exchange.getOut();
             msg.setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON);
             msg.setHeader(Exchange.CHARSET_NAME, "UTF-8");
             msg.setFault(false);
-
             if (apiEx instanceof MissingAuthHeaderException) {
                 msg.setHeader(Exchange.HTTP_RESPONSE_CODE, 401);
                 msg.setHeader("WWW-Authenticate", "Basic realm=\"hub-services\"");
@@ -54,7 +52,6 @@ public class PrepareErrorResponse {
         JSONObject failure = new JSONObject();
         failure.put("reason", apiEx.getError().getDescription());
         failure.put("details", apiEx.getMessage());
-
         JSONObject response = new JSONObject();
         response.put("failure", failure);
         return response;
@@ -64,19 +61,14 @@ public class PrepareErrorResponse {
         JSONObject failure = new JSONObject();
         failure.put("reason", "INTERNAL_SERVER_ERROR");
         failure.put("details", cause.getLocalizedMessage());
-
         JSONObject jsonMessage = new JSONObject();
         jsonMessage.put("failure", failure);
-
         Message msg = exchange.getOut();
         msg.setHeader(Exchange.CONTENT_TYPE, MediaType.APPLICATION_JSON);
         msg.setHeader(Exchange.CHARSET_NAME, "UTF-8");
         msg.setHeader(Exchange.HTTP_RESPONSE_CODE, 500);
         msg.setBody(jsonMessage.toString());
         msg.setFault(true);
-
-        LOG.error("Set error message for none messaging exception '"
-                  + cause.getLocalizedMessage() + "': Message returned is: '" + jsonMessage + "'",
-                  cause);
+        LOG.error("Set error message for none messaging exception '" + cause.getLocalizedMessage() + "': Message returned is: '" + jsonMessage + "'", cause);
     }
 }

@@ -1,8 +1,5 @@
 package com.experts.core.biller.statemachine.api.activemq.standers.config;
 
-/**
- * @author Ulises Bocchio
- */
 
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
